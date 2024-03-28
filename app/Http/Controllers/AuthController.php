@@ -10,7 +10,7 @@ use GuzzleHttp\Exception\BadResponseException;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(Request $request, $signup = false, $user = null)
     {
         try {
             $this->validate($request, [
@@ -20,17 +20,31 @@ class AuthController extends Controller
 
             $email    = $request->email;
             $password = $request->password;
-            $client = new Client();
+            $client   = new Client();
 
-            return $client->post(config('service.passport.login_endpoint'), [
+            $token = $client->post(config('service.passport.login_endpoint'), [
                 "form_params" => [
                     "client_secret" => config('service.passport.client_secret'),
-                    "grant_type" => "password",
-                    "client_id" => config('service.passport.client_id'),
-                    "username" => $request->email,
-                    "password" => $request->password
+                    "grant_type"    => "password",
+                    "client_id"     => config('service.passport.client_id'),
+                    "username"      => $request->email,
+                    "password"      => $request->password
                 ]
             ]);
+            $responseBody = $token->getBody()->getContents();
+            $token = json_decode($responseBody, true);
+            $token = $token['access_token'];
+            if ($signup) {
+                return response()->json([
+                    'token' => $token,
+                    'user'  => $user
+                ]);
+            } else {
+                return response()->json([
+                    'token' => $token
+                ]);
+            }
+            
         } catch (ValidationException $e) {
 
             return response()->json(['error' => $e->errors()], 422);
@@ -48,18 +62,18 @@ class AuthController extends Controller
                 'password' => 'required|min:6|confirmed'
             ]);
 
-                $name = $request->name;
-                $email = $request->email;
+                $name     = $request->name;
+                $email    = $request->email;
                 $password = $request->password;
 
-                $user = new User();
-                $user->name = $name;
-                $user->email = $email;
+                $user           = new User();
+                $user->name     = $name;
+                $user->email    = $email;
                 $user->password = app('hash')->make($password);
     
                 if ($user->save()) {
-                    // Will call login method
-                    return $this->login($request);
+                      // Will call login method
+                    return $this->login($request, true, $user);
                 }
         } catch (ValidationException $e) {
 
