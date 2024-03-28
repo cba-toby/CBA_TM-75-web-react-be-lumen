@@ -24,4 +24,6 @@ $router->get('foo', function () {
 
 $router->group(['prefix' => 'auth'], function ($router) {
     $router->post('signup', 'AuthController@signup');
+    $router->post('login', 'AuthController@login');
+    $router->post('logout', 'AuthController@logout');
 });
