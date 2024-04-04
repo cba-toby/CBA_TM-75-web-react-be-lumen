@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use GuzzleHttp\Client;
 use \Illuminate\Validation\ValidationException;
-use GuzzleHttp\Exception\BadResponseException;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function login(Request $request, $signup = false, $user = null)
+    public function login(Request $request, $register = false, $user = null)
     {
         try {
             $this->validate($request, [
@@ -20,37 +20,46 @@ class AuthController extends Controller
 
             $email    = $request->email;
             $password = $request->password;
-            $client   = new Client();
-
-            $token = $client->post(config('service.passport.login_endpoint'), [
+            if (!$register){
+                $user = User::where('email', $email)->first();
+    
+                if (!$user || !Hash::check($password, $user->password)) {
+                    return response()->json(['error' => 'Provied email address or password is incorrect!'], 401);
+                }
+            }
+            
+            $client = new Client();
+            $token  = $client->post(config('service.passport.login_endpoint'), [
                 "form_params" => [
                     "client_secret" => config('service.passport.client_secret'),
                     "grant_type"    => "password",
                     "client_id"     => config('service.passport.client_id'),
-                    "username"      => $request->email,
-                    "password"      => $request->password
+                    "username"      => $email,
+                    "password"      => $password
                 ]
             ]);
+
             $responseBody = $token->getBody()->getContents();
             $token = json_decode($responseBody, true);
             $token = $token['access_token'];
-            if ($signup) {
+
+            if ($register) {
                 return response()->json([
                     'token' => $token,
                     'user'  => $user
                 ]);
             } else {
                 return response()->json([
-                    'token' => $token
+                    'token' => $token,
+                    'user'  => $user
                 ]);
             }
-            
         } catch (ValidationException $e) {
 
-            return response()->json(['error' => $e->errors()], 422);
+            return response()->json(['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
 
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['errors' => $e->getMessage()], 500);
         }
     }
     public function signup(Request $request)
@@ -77,10 +86,10 @@ class AuthController extends Controller
                 }
         } catch (ValidationException $e) {
 
-            return response()->json(['error' => $e->errors()], 422);
+            return response()->json(['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
 
-            return response()->json(['error' => $e], 500);
+            return response()->json(['errors' => $e], 500);
         }
     }
 
