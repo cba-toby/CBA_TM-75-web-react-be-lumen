@@ -24,4 +24,15 @@ $router->get('foo', function () {
 
 $router->group(['prefix' => 'auth'], function ($router) {
     $router->post('signup', 'AuthController@signup');
+    $router->post('login', 'AuthController@login');
+});
+$router->group(['prefix' => 'admin', 'middleware' => 'auth'], function ($router) {
+    $router->post('logout', 'AuthController@logout');
+
+    $router->get('foo2', function () {
+        return 'Hello World2';
+    }); 
+    $router->get('user', function () {
+        return auth()->user();
+    });
 });
