@@ -35,4 +35,15 @@ $router->group(['prefix' => 'admin', 'middleware' => 'auth'], function ($router)
     $router->get('user', function () {
         return auth()->user();
     });
-});
+
+    // User routes
+    $router->group(['prefix' => 'users'], function ($router) {
+        $router->get('/', ['uses' => 'UserController@index', 'as' => 'user.list']);
+        $router->post('/', ['uses' => 'UserController@store', 'as' => 'user.store']);
+        $router->get('/show/{id}', ['uses' => 'UserController@show', 'as' => 'user.show']);
+        $router->put('/update/{id}', ['uses' => 'UserController@update', 'as' => 'user.update']);
+        $router->delete('/destroy/{id}', ['uses' => 'UserController@destroy', 'as' => 'user.delete']);
+    });
+    
+    
+}); 
