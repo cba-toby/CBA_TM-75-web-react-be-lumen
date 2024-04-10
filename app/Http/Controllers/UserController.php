@@ -16,11 +16,14 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        return UserResource::collection(
-            User::orderBy('id', 'DESC')->paginate(10)
-        );
+        $query = $request->input('search');
+        $users = User::where('name', 'like', "%$query%")
+            ->orWhere('email', 'like', "%$query%")
+            ->orderBy('id', 'DESC')
+            ->paginate(10);
+        return UserResource::collection($users);
     }
 
     /**
