@@ -44,6 +44,8 @@ $router->group(['prefix' => 'admin', 'middleware' => 'auth'], function ($router)
         $router->put('/update/{id}', ['uses' => 'UserController@update', 'as' => 'user.update']);
         $router->delete('/destroy/{id}', ['uses' => 'UserController@destroy', 'as' => 'user.delete']);
     });
-    
-    
-}); 
+    $router->group(['prefix' => 'category'], function ($router) {
+        $router->get('/', ['uses' => 'CategoryController@index', 'as' => 'category.list']);
+        $router->post('/', ['uses' => 'CategoryController@store', 'as' => 'category.store']);
+    });
+});     
