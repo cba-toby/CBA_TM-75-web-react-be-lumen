@@ -23,6 +23,7 @@ class UserController extends Controller
             ->orWhere('email', 'like', "%$query%")
             ->orderBy('id', 'DESC')
             ->paginate(10);
+
         return UserResource::collection($users);
     }
 

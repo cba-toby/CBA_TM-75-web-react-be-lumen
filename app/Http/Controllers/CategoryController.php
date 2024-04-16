@@ -12,14 +12,19 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $query = $request->input('search');
-        $users = Category::where('name', 'like', "%$query%")
-            ->orWhere('email', 'like', "%$query%")
+        $categories = Category::where('title', 'like', "%$query%")
+            ->orWhere('slug', 'like', "%$query%")
             ->orderBy('id', 'DESC')
             ->paginate(10);
 
-        return CategoryResource::collection($users);
-    }
+        $categories_parent = $this->parentShow();
 
+        return response()->json([
+            'categories' => CategoryResource::collection($categories),
+            'categories_parent' => $categories_parent
+        ]);
+    }
+    
     public function parentShow()
     {
         $categories = Category::whereNull('parent_id')->get();
