@@ -46,6 +46,10 @@ $router->group(['prefix' => 'admin', 'middleware' => 'auth'], function ($router)
     });
     $router->group(['prefix' => 'category'], function ($router) {
         $router->get('/', ['uses' => 'CategoryController@index', 'as' => 'category.list']);
+        $router->get('/parent', ['uses' => 'CategoryController@parentShow', 'as' => 'category.parent']);
         $router->post('/', ['uses' => 'CategoryController@store', 'as' => 'category.store']);
+        $router->get('/show/{id}', ['uses' => 'CategoryController@show', 'as' => 'category.show']);
+        $router->put('/update/{id}', ['uses' => 'CategoryController@update', 'as' => 'category.update']);
+        $router->delete('/destroy/{id}', ['uses' => 'CategoryController@destroy', 'as' => 'category.delete']);
     });
 });     
