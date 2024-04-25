@@ -35,4 +35,21 @@ $router->group(['prefix' => 'admin', 'middleware' => 'auth'], function ($router)
     $router->get('user', function () {
         return auth()->user();
     });
-});
+
+    // User routes
+    $router->group(['prefix' => 'users'], function ($router) {
+        $router->get('/', ['uses' => 'UserController@index', 'as' => 'user.list']);
+        $router->post('/', ['uses' => 'UserController@store', 'as' => 'user.store']);
+        $router->get('/show/{id}', ['uses' => 'UserController@show', 'as' => 'user.show']);
+        $router->put('/update/{id}', ['uses' => 'UserController@update', 'as' => 'user.update']);
+        $router->delete('/destroy/{id}', ['uses' => 'UserController@destroy', 'as' => 'user.delete']);
+    });
+    $router->group(['prefix' => 'category'], function ($router) {
+        $router->get('/', ['uses' => 'CategoryController@index', 'as' => 'category.list']);
+        $router->get('/parent', ['uses' => 'CategoryController@parentShow', 'as' => 'category.parent']);
+        $router->post('/', ['uses' => 'CategoryController@store', 'as' => 'category.store']);
+        $router->get('/show/{id}', ['uses' => 'CategoryController@show', 'as' => 'category.show']);
+        $router->put('/update/{id}', ['uses' => 'CategoryController@update', 'as' => 'category.update']);
+        $router->delete('/destroy/{id}', ['uses' => 'CategoryController@destroy', 'as' => 'category.delete']);
+    });
+});     
