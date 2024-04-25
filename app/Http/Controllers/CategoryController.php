@@ -18,9 +18,17 @@ class CategoryController extends Controller
             ->paginate(10);
 
         $categories_parent = $this->parentShow();
+        $paginationData    = [
+            'total'          => $categories->total(),
+            'current_page'   => $categories->currentPage(),
+            'last_page'      => $categories->lastPage(),
+            'has_more_pages' => $categories->hasMorePages(),
+            'per_page'       => $categories->perPage(),
+        ];
 
         return response()->json([
-            'categories' => CategoryResource::collection($categories),
+            'categories'        => CategoryResource::collection($categories),
+            'pagination'        => $paginationData,
             'categories_parent' => $categories_parent
         ]);
     }
