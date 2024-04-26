@@ -55,7 +55,11 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         if ($category) {
-            return response()->json(new CategoryResource($category));
+            $categories_parent = $this->parentShow();
+            return response()->json([
+                'category'          => new CategoryResource($category),
+                'categories_parent' => $categories_parent
+            ]);
         } else {
             return response()->json(['error' => 'Category not found'], 404);
         }
