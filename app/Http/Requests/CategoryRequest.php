@@ -31,14 +31,12 @@ class CategoryRequest extends FormRequest
                 'title'      => 'required|string|max:55|unique:categories,title',
                 'meta_title' => 'string|max:55',
                 'slug'       => 'required|string|max:55|unique:categories,slug',
-                'parent_id'  => 'integer',
             ];
         } else {
             return [
                 'title'      => 'required|string|max:55',
                 'meta_title' => 'string|max:55',
                 'slug'       => 'required|string|max:55',
-                'parent_id'  => 'integer',
             ];
         }
     }
