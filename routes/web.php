@@ -46,6 +46,7 @@ $router->group(['prefix' => 'admin', 'middleware' => 'auth'], function ($router)
         $router->delete('/destroy/{id}', ['uses' => 'UserController@destroy', 'as' => 'user.delete']);
     });
     
+    // Category routes
     $router->group(['prefix' => 'category'], function ($router) {
         $router->get('/', ['uses' => 'CategoryController@index', 'as' => 'category.list']);
         $router->get('/parent', ['uses' => 'CategoryController@parentShow', 'as' => 'category.parent']);
@@ -55,6 +56,7 @@ $router->group(['prefix' => 'admin', 'middleware' => 'auth'], function ($router)
         $router->delete('/destroy/{id}', ['uses' => 'CategoryController@destroy', 'as' => 'category.delete']);
     });
 
+    // Post routes
     $router->group(['prefix' => 'post'], function ($router) {
         $router->get('/', ['uses' => 'PostController@index', 'as' => 'post.list']);
         $router->get('/category', ['uses' => 'PostController@getCategory', 'as' => 'post.get_category']);
@@ -63,5 +65,8 @@ $router->group(['prefix' => 'admin', 'middleware' => 'auth'], function ($router)
         $router->post('/update/{id}', ['uses' => 'PostController@update', 'as' => 'post.update']);
         $router->delete('/destroy/{id}', ['uses' => 'PostController@destroy', 'as' => 'post.delete']);
     });
+});
 
-});     
+$router->group(['prefix' => 'user'], function($router) {
+    $router->get('/post', ['uses' => 'User\PostController@index', 'as' => 'user.post.list']);
+});
