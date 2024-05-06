@@ -12,9 +12,13 @@ use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::orderBy('id', 'DESC')->paginate(10);
+        $query = $request->input('search');
+        $posts = Post::where('title', 'like', "%$query%")
+            ->orWhere('slug', 'like', "%$query%")
+            ->orderBy('id', 'DESC')
+            ->paginate(10);
         $categories = $this->getCategory();
 
         return response()->json([
