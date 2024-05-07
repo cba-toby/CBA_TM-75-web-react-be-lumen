@@ -33,7 +33,7 @@ class PostRequest extends FormRequest
                 'category_id' => 'required|integer',
                 'meta_title'  => 'string|max:55',
                 'slug'        => 'required|string|max:55|unique:posts,slug',
-                'sumary'      => 'string|max:255',
+                'summary'      => 'string|max:255',
                 'content'     => 'required|string',
                 
             ];
@@ -43,7 +43,7 @@ class PostRequest extends FormRequest
                 'category_id' => 'integer',
                 'meta_title'  => 'string|max:55',
                 'slug'        => 'string|max:55',
-                'sumary'      => 'string|max:255',
+                'summary'      => 'string|max:255',
                 'content'     => 'string',
             ];
         }

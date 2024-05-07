@@ -102,6 +102,7 @@ class PostController extends Controller
                     $imagePath = $file->storeAs('images',$filename, 'public');
                     $data['image'] = $filename;
                 }
+
                 $post->update($data);
                 
                 return response()->json($data);
