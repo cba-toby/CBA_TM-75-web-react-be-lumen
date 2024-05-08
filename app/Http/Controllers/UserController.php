@@ -34,11 +34,25 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $data             = $request->validated();
-        $data['password'] = Hash::make($data['password']);
-        $user             = User::create($data);
+        try {
+            $data = $request->all();
+            
+            $data['password'] = Hash::make($data['password']);
+            
+            if ($request->hasFile('image')) {
+                $file          = $request->file('image');
+                $ext           = $file->getClientOriginalExtension();
+                $filename      = time().'image.'.$ext;
+                $imagePath     = $file->storeAs('images',$filename, 'public');
+                $data['image'] = $filename;
+            }
+            
+            $user = User::create($data);
 
-        return response(new UserResource($user) , 201);
+            return response(new UserResource($user) , 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
     }
 
 
@@ -51,20 +65,37 @@ class UserController extends Controller
     public function show($id) 
     {
         $user = User::find($id);
-        return response()->json(new UserResource($user));
+        $imagePath  = route('post.get_image', ['filename' => $user->image]);
+
+        return response()->json([
+            'user'       => new UserResource($user),
+            'image'      => $imagePath
+        ]);
     }
 
 
     public function update(UpdateUserRequest $request, $id)
     {
-        $data = $request->validated();
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        }
-        $user = User::find($id);
-        $user->update($data);
+        try {
+            $data = $request->all();
 
-        return new UserResource($user);
+            if (isset($data['password'])) {
+                $data['password'] = Hash::make($data['password']);
+            }
+            $user = User::find($id);
+            if ($request->hasFile('image')) {
+                $file          = $request->file('image');
+                $ext           = $file->getClientOriginalExtension();
+                $filename      = time().'image.'.$ext;
+                $imagePath     = $file->storeAs('images',$filename, 'public');
+                $data['image'] = $filename;
+            }
+            $user->update($data);
+
+            return new UserResource($user);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
     }
 
     public function destroy($id)

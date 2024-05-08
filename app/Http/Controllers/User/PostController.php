@@ -7,11 +7,15 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Category;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\AuthorResource;
+use App\Http\Resources\PostResource;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
     public function index(Request $request)
     {
+
         $search_keyword = $request->input('search');
         $search_category = $request->input('category');
 
@@ -50,11 +54,18 @@ class PostController extends Controller
 
     public function show(Request $request)
     {
-        $slug = $request->slug;
-        $post = Post::where('slug', $slug)->first();
+        try {
+            $slug = $request->slug;
+            $post = Post::where('slug', $slug)->first();
 
-        return response()->json([
-            'post' => $post
-        ]);
+            return response()->json([
+                'post' => new PostResource($post),
+                'author' => new AuthorResource($post->author)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
