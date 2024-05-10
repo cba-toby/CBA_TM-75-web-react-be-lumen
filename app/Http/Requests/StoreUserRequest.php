@@ -26,9 +26,12 @@ class StoreUserRequest extends FormRequest
     protected function rules(): array
     {
         return [
-            'name' => 'required|string|max:55',
-            'email' => 'required|email|unique:users,email',
-            'password' => [
+            'name'           => 'required|string|max:55',
+            'email'          => 'required|email|unique:users,email',
+            'link_facebook'  => 'string',
+            'link_instagram' => 'string',
+            'link_x'         => 'string',
+            'password'       => [
                 'required',
                 Password::min(8)
                     ->letters()

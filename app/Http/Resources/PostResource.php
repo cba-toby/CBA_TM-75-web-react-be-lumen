@@ -23,6 +23,7 @@ class PostResource extends JsonResource
             'summary'     => $this->summary,
             'content'     => $this->content,
             'image'       => $this->image,
+            'updated_at'  => $this->updated_at,
         ];
     }
 }

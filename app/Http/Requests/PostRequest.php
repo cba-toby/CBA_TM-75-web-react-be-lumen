@@ -33,9 +33,9 @@ class PostRequest extends FormRequest
                 'category_id' => 'required|integer',
                 'meta_title'  => 'string|max:55',
                 'slug'        => 'required|string|max:55|unique:posts,slug',
-                'sumary'      => 'string|max:255',
+                'summary'      => 'string|max:255',
                 'content'     => 'required|string',
-                
+                'image'       => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ];
         } else {
             return [
@@ -43,7 +43,7 @@ class PostRequest extends FormRequest
                 'category_id' => 'integer',
                 'meta_title'  => 'string|max:55',
                 'slug'        => 'string|max:55',
-                'sumary'      => 'string|max:255',
+                'summary'      => 'string|max:255',
                 'content'     => 'string',
             ];
         }
