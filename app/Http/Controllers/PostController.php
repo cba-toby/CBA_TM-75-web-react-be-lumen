@@ -18,6 +18,9 @@ class PostController extends Controller
         $posts = Post::where('title', 'like', "%$query%")
             ->orWhere('slug', 'like', "%$query%")
             ->orderBy('id', 'DESC')
+            ->with(['author' => function ($query) {
+                $query->select('id', 'name');
+            }])
             ->paginate(10);
         $categories = $this->getCategory();
 
@@ -37,7 +40,11 @@ class PostController extends Controller
     public function store(PostRequest $request)
     {
         try {
+            $user = $request->user();
+            
             $data = $request->all();
+            $data['author_id'] = $user['id'];
+
             if ($request->category_id == '') {
                 $data['category_id'] = null;
             }
@@ -122,7 +129,7 @@ class PostController extends Controller
         $post = Post::find($id);
         if ($post) {
             $post->delete();
-            return response()->json([
+        return response()->json([
                 'message' => 'Post deleted successfully'
             ]);
         }

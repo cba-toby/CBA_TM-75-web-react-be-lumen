@@ -35,7 +35,7 @@ class PostRequest extends FormRequest
                 'slug'        => 'required|string|max:55|unique:posts,slug',
                 'summary'      => 'string|max:255',
                 'content'     => 'required|string',
-                
+                'image'       => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ];
         } else {
             return [
