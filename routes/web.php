@@ -65,6 +65,12 @@ $router->group(['prefix' => 'admin', 'middleware' => 'auth'], function ($router)
         $router->post('/update/{id}', ['uses' => 'PostController@update', 'as' => 'post.update']);
         $router->delete('/destroy/{id}', ['uses' => 'PostController@destroy', 'as' => 'post.delete']);
     });
+
+    // Public Post routes
+    $router->group(['prefix' => 'public-post'], function ($router) {
+        $router->get('/', ['uses' => 'PublicPostController@index', 'as' => 'public-post.list']);
+        $router->post('update/{id}', ['uses' => 'PublicPostController@handlePublic', 'as' => 'public-post.handle']);
+    });
 });
 
 $router->group(['prefix' => 'user'], function($router) {

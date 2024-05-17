@@ -44,7 +44,7 @@ class PostController extends Controller
             
             $data = $request->all();
             $data['author_id'] = $user['id'];
-
+            
             if ($request->category_id == '') {
                 $data['category_id'] = null;
             }
@@ -101,7 +101,7 @@ class PostController extends Controller
                 if($request->category_id == ''){
                     $data['category_id'] = null;
                 }
-
+                
                 if ($request->hasFile('image')) {
                     $file          = $request->file('image');
                     $ext           = $file->getClientOriginalExtension();
