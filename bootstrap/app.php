@@ -63,7 +63,9 @@ $app->singleton(
 */
 
 $app->configure('auth');
+$app->configure('role_base_provider');
 $app->configure('service');
+$app->configure('constants');
 
 /*
 |--------------------------------------------------------------------------
@@ -82,6 +84,7 @@ $app->middleware([
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
+    'role_base_provider' => App\Http\Middleware\RoleBaseProviderMiddleware::class,
 ]);
 
 /*
