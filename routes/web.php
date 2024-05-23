@@ -74,9 +74,18 @@ $router->group(['prefix' => 'admin', 'middleware' => ['auth:api', 'role_base_pro
         $router->get('/', ['uses' => 'PublicPostController@index', 'as' => 'public-post.list']);
         $router->post('update/{id}', ['uses' => 'PublicPostController@handlePublic', 'as' => 'public-post.handle']);
     });
+
+    // Contact routes
+    $router->group(['prefix' => 'contact'], function ($router) {
+        $router->get('/', ['uses' => 'ContactController@index', 'as' => 'contact.list']);
+        $router->get('/reply/{id}', ['uses' => 'ContactController@reply', 'as' => 'contact.reply']);
+        $router->post('/reply/{id}', ['uses' => 'ContactController@sendReply', 'as' => 'contact.send_reply']);
+    });
+    
 });
 
 $router->group(['prefix' => 'user'], function($router) {
     $router->get('/post', ['uses' => 'User\PostController@index', 'as' => 'user.post.list']);
     $router->get('/post/show/{slug}', ['uses' => 'User\PostController@show', 'as' => 'user.post.show']);
+    $router->post('/contact', ['uses' => 'ContactController@contract', 'as' => 'user.contract']);
 });

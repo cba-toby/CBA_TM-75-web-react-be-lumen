@@ -67,6 +67,9 @@ $app->configure('role_base_provider');
 $app->configure('service');
 $app->configure('constants');
 
+$app->configure('services');
+$app->configure('mail');
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -105,7 +108,7 @@ $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(Laravel\Passport\PassportServiceProvider::class);
 $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
 $app->register(\Anik\Form\FormRequestServiceProvider::class);
-
+$app->register(Illuminate\Mail\MailServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
