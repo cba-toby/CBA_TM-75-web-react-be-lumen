@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Contact;
+use App\Models\ContactReply;
+use App\Http\Requests\ContactReplyRequest;
 
 class ContactController extends Controller
 {
     public function contract(Request $request)
     {
-        $data = $request->all();
+        $data    = $request->all();
         $contact = Contact::create($data);
         return response()->json(['data' => $data]);
     
@@ -28,12 +30,11 @@ class ContactController extends Controller
     {
         $query = $request->input('search');
 
-        $contacts = Contact::
-        orWhere('email', 'like', "%$query%")
-        ->orWhere('phone', 'like', "%$query%")
-        ->orWhere('name', 'like', "%$query%")
-        ->orderBy('id', 'DESC')
-        ->paginate(10);
+        $contacts = Contact::orWhere('email', 'like', "%$query%")
+            ->orWhere('phone', 'like', "%$query%")
+            ->orWhere('name', 'like', "%$query%")
+            ->orderBy('id', 'DESC')
+            ->paginate(10);
 
         return response()->json(['contacts' => $contacts]);
     }
@@ -41,16 +42,45 @@ class ContactController extends Controller
     public function reply($id)
     {
         $contact = Contact::find($id);
-        return response()->json(['contact' => $contact]);
+        $contact_reply = ContactReply::where('contact_id', $id)->get();
+        return response()->json([
+            'contact' => $contact,
+            'contact_reply' => $contact_reply,
+        ]);
     }
 
-    public function sendReply(Request $request, $id)
+    public function sendReply(ContactReplyRequest $request, $id)
     {
-        $data = $request->all();
-        
-        return response()->json([
-            'content_reply' => $data['content'],
-            'status_contact' => $data['status']
-        ]);
+        $data       = $request->all();
+        $email_form = env("EMAIL_FOR_ADMIN", "toby@cybridge.jp");
+        try {
+            Contact::where('id', $id)->update([
+                'status' => $data['status'],
+            ]);
+            
+            if($data['reply']) {
+                $data_reply['contact_id'] = $id;
+                $data_reply['content']    = $data['reply'];
+                $data_reply['mail_form']  = $email_form;
+    
+                ContactReply::create($data_reply);
+                
+                Mail::send('emails.reply_contact', $data, function ($message) use ($email_form){
+                    $message->to('recipient@example.com', 'Recipient Name')
+                    ->subject('Email phản Hồi - TobyBlog');
+                    $message->from($email_form, 'TobyBlog');
+                });
+            }
+
+            return response()->json([
+                'content_reply'  => $data['reply'],
+                'status_contact' => $data['status'],
+                'email_form'     => $email_form,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e
+            ], 500);
+        }
     }
 }
