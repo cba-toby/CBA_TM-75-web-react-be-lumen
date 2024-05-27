@@ -14,9 +14,17 @@ return [
         ],
     ],
     'providers' => [
-        'users' => [
+        // 'users' => [
+        //     'driver' => 'eloquent',
+        //     'model' => User::class
+        // ],
+        'users' => [ // Default provider for users with role 0
             'driver' => 'eloquent',
-            'model' => User::class
+            'model' => User::class,
+        ],
+        'admins' => [ // Provider for users with role 1
+            'driver' => 'eloquent',
+            'model' => User::class,
         ],
     ]
 ];

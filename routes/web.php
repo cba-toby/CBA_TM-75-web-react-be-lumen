@@ -17,25 +17,28 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('foo', function () {
-    return 'Hello World';
-});
+// $router->group(['middleware' => ['auth:api', 'role_base_provider']], function ($router) {
+//     $router->get('foo', [function () {
+//         return 'Hello World';
+//     }, 'as' => 'hello']);
+// });
 
 $router->get('/get-image/{filename}', ['uses' => 'PostController@getImage', 'as' => 'post.get_image']);
 
 $router->group(['prefix' => 'auth'], function ($router) {
-    $router->post('signup', 'AuthController@signup');
+    // $router->post('signup', 'AuthController@signup');
     $router->post('login', 'AuthController@login');
 });
-$router->group(['prefix' => 'admin', 'middleware' => 'auth'], function ($router) {
+$router->group(['prefix' => 'admin', 'middleware' => ['auth:api', 'role_base_provider']], function ($router) {
     $router->post('logout', 'AuthController@logout');
 
-    $router->get('foo2', function () {
-        return 'Hello World2';
-    }); 
-    $router->get('user', function () {
+    // $router->get('foo2', function () {
+    //     return 'Hello World2';
+    // }); 
+    
+    $router->get('user', [function () {
         return auth()->user();
-    });
+    }, 'as' => 'user.info']);
 
     // User routes
     $router->group(['prefix' => 'users'], function ($router) {
@@ -65,9 +68,24 @@ $router->group(['prefix' => 'admin', 'middleware' => 'auth'], function ($router)
         $router->post('/update/{id}', ['uses' => 'PostController@update', 'as' => 'post.update']);
         $router->delete('/destroy/{id}', ['uses' => 'PostController@destroy', 'as' => 'post.delete']);
     });
+
+    // Public Post routes
+    $router->group(['prefix' => 'public-post'], function ($router) {
+        $router->get('/', ['uses' => 'PublicPostController@index', 'as' => 'public-post.list']);
+        $router->post('update/{id}', ['uses' => 'PublicPostController@handlePublic', 'as' => 'public-post.handle']);
+    });
+
+    // Contact routes
+    $router->group(['prefix' => 'contact'], function ($router) {
+        $router->get('/', ['uses' => 'ContactController@index', 'as' => 'contact.list']);
+        $router->get('/reply/{id}', ['uses' => 'ContactController@reply', 'as' => 'contact.reply']);
+        $router->post('/reply/{id}', ['uses' => 'ContactController@sendReply', 'as' => 'contact.send_reply']);
+    });
+    
 });
 
 $router->group(['prefix' => 'user'], function($router) {
     $router->get('/post', ['uses' => 'User\PostController@index', 'as' => 'user.post.list']);
     $router->get('/post/show/{slug}', ['uses' => 'User\PostController@show', 'as' => 'user.post.show']);
+    $router->post('/contact', ['uses' => 'ContactController@contract', 'as' => 'user.contract']);
 });

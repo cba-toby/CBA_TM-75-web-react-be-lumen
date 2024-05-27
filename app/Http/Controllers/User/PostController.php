@@ -19,7 +19,7 @@ class PostController extends Controller
         $search_keyword = $request->input('search');
         $search_category = $request->input('category');
 
-        $posts = Post::orderBy('id', 'DESC');
+        $posts = Post::orderBy('id', 'DESC')->where('published', 1);
         
         if ($search_category) {
             $posts->where('category_id', $search_category);
