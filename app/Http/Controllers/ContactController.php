@@ -12,18 +12,20 @@ class ContactController extends Controller
 {
     public function contract(Request $request)
     {
-        $data    = $request->all();
-        $contact = Contact::create($data);
-        return response()->json(['data' => $data]);
-    
-        $data = ['name' => 'John Doe'];
-        Mail::send('emails.check', $data, function ($message) {
-            $message->to('recipient@example.com', 'Recipient Name')
-                    ->subject('Welcome to Our Website');
-            $message->from('from@example.com', 'Example');
-        });
+        try {
+            $data    = $request->all();
+            $contact = Contact::create($data);
 
-        return response()->json(['message' => 'Mail sent successfully']);
+            Mail::send('emails.contact', $data, function ($message) {
+                $message->to('recipient@example.com', 'Recipient Name')
+                        ->subject('Welcome to Our Website');
+                $message->from('from@example.com', 'Example');
+            });
+
+            return response()->json(['message' => 'Mail sent successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 
     public function index(Request $request)
