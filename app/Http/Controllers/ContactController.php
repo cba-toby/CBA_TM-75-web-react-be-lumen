@@ -64,11 +64,12 @@ class ContactController extends Controller
                 $data_reply['contact_id'] = $id;
                 $data_reply['content']    = $data['reply'];
                 $data_reply['mail_form']  = $email_form;
-    
-                ContactReply::create($data_reply);
+
+                $data_contact = Contact::find($id);
+                $email_to     = $data_contact->email;
                 
-                Mail::send('emails.reply_contact', $data, function ($message) use ($email_form){
-                    $message->to('recipient@example.com', 'Recipient Name')
+                Mail::send('emails.reply_contact', $data, function ($message) use ($email_form, $email_to){
+                    $message->to($email_to, 'Recipient Name')
                     ->subject('Email phản Hồi - TobyBlog');
                     $message->from($email_form, 'TobyBlog');
                 });
