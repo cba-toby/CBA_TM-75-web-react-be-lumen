@@ -64,7 +64,9 @@ class ContactController extends Controller
                 $data_reply['contact_id'] = $id;
                 $data_reply['content']    = $data['reply'];
                 $data_reply['mail_form']  = $email_form;
-
+                
+                ContactReply::create($data_reply);
+                
                 $data_contact = Contact::find($id);
                 $email_to     = $data_contact->email;
                 
