@@ -17,9 +17,9 @@ class ContactController extends Controller
             $contact = Contact::create($data);
 
             Mail::send('emails.contact', $data, function ($message) {
-                $message->to('recipient@example.com', 'Recipient Name')
+                $message->to('toby@cybridge.jp', 'Recipient Name')
                         ->subject('Welcome to Our Website');
-                $message->from('from@example.com', 'Example');
+                $message->from('toby@cybridge.jp', 'Example');
             });
 
             return response()->json(['message' => 'Mail sent successfully'], 200);
