@@ -13,7 +13,8 @@
         "illuminate/mail": "^9.52",
         "laravel/lumen-framework": "^9.0",
         "laravel/passport": "^10.4",
-        "league/flysystem": "^3.27"
+        "league/flysystem": "^3.27",
+        "php-amqplib/php-amqplib": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

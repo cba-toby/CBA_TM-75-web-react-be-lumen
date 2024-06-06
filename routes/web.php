@@ -88,4 +88,5 @@ $router->group(['prefix' => 'user'], function($router) {
     $router->get('/post', ['uses' => 'User\PostController@index', 'as' => 'user.post.list']);
     $router->get('/post/show/{slug}', ['uses' => 'User\PostController@show', 'as' => 'user.post.show']);
     $router->post('/contact', ['uses' => 'ContactController@contract', 'as' => 'user.contract']);
+    $router->post('/comment', ['uses' => 'User\CommentController@sendComment', 'as' => 'user.comment']);
 });
