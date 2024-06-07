@@ -10,10 +10,11 @@ use PhpAmqpLib\Message\AMQPMessage;
 use Illuminate\Support\Facades\Log;
 use App\Models\Post;
 use App\Models\Comment;
+use App\Http\Requests\CommentRequest;
 
 class CommentController extends Controller
 {
-    public function sendComment(Request $request)
+    public function sendComment(CommentRequest $request)
     {
         try {
             $data         = $request->all();

@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\PostResource;
 use Illuminate\Support\Facades\Storage;
+use App\Models\View;
 
 class PostController extends Controller
 {
@@ -56,6 +57,11 @@ class PostController extends Controller
                 $data['image'] = $filename;
             }
             $post = Post::create($data);
+
+            View::create([
+                'post_id' => $post->id,
+                'view'    => 0
+            ]);
 
             return response(new PostResource($post), 201);
         } catch (\Exception $e) {

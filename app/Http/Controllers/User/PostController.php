@@ -10,6 +10,7 @@ use App\Http\Resources\CategoryResource;
 use App\Http\Resources\AuthorResource;
 use App\Http\Resources\PostResource;
 use Illuminate\Support\Facades\Auth;
+use App\Models\View;
 
 class PostController extends Controller
 {
@@ -59,10 +60,22 @@ class PostController extends Controller
             $post     = Post::where('slug', $slug)->first();
             $comments = $post->comments;
 
+
+            $view = View::where('post_id', $post->id)->first();
+            if (!$view) {
+                $view = new View();
+                $view->post_id = $post->id;
+                $view->views   = 0;
+                $view->save();
+            }
+            $view->views += 1;
+            $view->save();
+
             return response()->json([
                 'post'     => new PostResource($post),
                 'author'   => new AuthorResource($post->author),
-                'comments' => $comments
+                'comments' => $comments,
+                'views'    => $view->views
             ]);
         } catch (\Exception $e) {
             return response()->json([
