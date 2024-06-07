@@ -10,13 +10,14 @@ use App\Http\Resources\CategoryResource;
 use App\Http\Resources\AuthorResource;
 use App\Http\Resources\PostResource;
 use Illuminate\Support\Facades\Auth;
+use App\Models\View;
 
 class PostController extends Controller
 {
     public function index(Request $request)
     {
 
-        $search_keyword = $request->input('search');
+        $search_keyword  = $request->input('search');
         $search_category = $request->input('category');
 
         $posts = Post::orderBy('id', 'DESC')->where('published', 1);
@@ -27,8 +28,8 @@ class PostController extends Controller
             $posts->where('title', 'like', "%$search_keyword%");
         }
 
-        $posts      = $posts->paginate(6);
-        $categories = $this->getCategory();
+        $posts               = $posts->paginate(6);
+        $categories          = $this->getCategory();
         $unique_category_ids = Post::select('category_id')
             ->distinct()
             ->get();
@@ -38,10 +39,10 @@ class PostController extends Controller
             ->get();
 
         return response()->json([
-            'posts'      => $posts,
-            'categories' => $categories,
+            'posts'             => $posts,
+            'categories'        => $categories,
             'uniqueCategoryIds' => $unique_category_ids,
-            'latestPosts' => $latest_posts
+            'latestPosts'       => $latest_posts
         ]);
     }
 
@@ -55,12 +56,26 @@ class PostController extends Controller
     public function show(Request $request)
     {
         try {
-            $slug = $request->slug;
-            $post = Post::where('slug', $slug)->first();
+            $slug     = $request->slug;
+            $post     = Post::where('slug', $slug)->first();
+            $comments = $post->comments;
+
+
+            $view = View::where('post_id', $post->id)->first();
+            if (!$view) {
+                $view = new View();
+                $view->post_id = $post->id;
+                $view->views   = 0;
+                $view->save();
+            }
+            $view->views += 1;
+            $view->save();
 
             return response()->json([
-                'post' => new PostResource($post),
-                'author' => new AuthorResource($post->author)
+                'post'     => new PostResource($post),
+                'author'   => new AuthorResource($post->author),
+                'comments' => $comments,
+                'views'    => $view->views
             ]);
         } catch (\Exception $e) {
             return response()->json([

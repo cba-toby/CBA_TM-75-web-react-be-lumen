@@ -70,6 +70,9 @@ $app->configure('constants');
 $app->configure('services');
 $app->configure('mail');
 
+$app->configure('rabbitmq');
+
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware

@@ -26,19 +26,19 @@ $router->get('/', function () use ($router) {
 $router->get('/get-image/{filename}', ['uses' => 'PostController@getImage', 'as' => 'post.get_image']);
 
 $router->group(['prefix' => 'auth'], function ($router) {
-    // $router->post('signup', 'AuthController@signup');
+    $router->post('signup', 'AuthController@signup');
     $router->post('login', 'AuthController@login');
 });
-$router->group(['prefix' => 'admin', 'middleware' => ['auth:api', 'role_base_provider']], function ($router) {
-    $router->post('logout', 'AuthController@logout');
 
-    // $router->get('foo2', function () {
-    //     return 'Hello World2';
-    // }); 
-    
+$router->group(['prefix' => 'admin', 'middleware' => ['auth:api', 'role_base_provider']], function ($router) {
+    $router->post('logout', ['uses' => 'AuthController@logout', 'as' => 'user.logout']);
+
     $router->get('user', [function () {
         return auth()->user();
     }, 'as' => 'user.info']);
+
+    // Admin Dasboard
+    $router->get('dashboard', ['uses' => 'DashboardController@index', 'as' => 'admin.dashboard']);
 
     // User routes
     $router->group(['prefix' => 'users'], function ($router) {
@@ -88,4 +88,5 @@ $router->group(['prefix' => 'user'], function($router) {
     $router->get('/post', ['uses' => 'User\PostController@index', 'as' => 'user.post.list']);
     $router->get('/post/show/{slug}', ['uses' => 'User\PostController@show', 'as' => 'user.post.show']);
     $router->post('/contact', ['uses' => 'ContactController@contract', 'as' => 'user.contract']);
+    $router->post('/comment', ['uses' => 'User\CommentController@sendComment', 'as' => 'user.comment']);
 });
