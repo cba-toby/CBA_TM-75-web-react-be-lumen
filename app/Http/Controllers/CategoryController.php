@@ -72,7 +72,7 @@ class CategoryController extends Controller
             return response()->json(['message' => 'Category not found'], 404);
         }
 
-        $data = $request->validated();
+        $data = $request->all();
 
         $existingTitle = Category::where('title', $data['title'])->where('id', '!=', $id)->exists();
         $existingSlug  = Category::where('slug', $data['slug'])->where('id', '!=', $id)->exists();

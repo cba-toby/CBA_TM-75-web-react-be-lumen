@@ -11,6 +11,7 @@ use App\Http\Resources\AuthorResource;
 use App\Http\Resources\PostResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\View;
+use Carbon\Carbon;
 
 class PostController extends Controller
 {
@@ -61,7 +62,9 @@ class PostController extends Controller
             $comments = $post->comments;
 
 
-            $view = View::where('post_id', $post->id)->first();
+            $view = View::where('post_id', $post->id)
+                ->where('created_at', Carbon::today())
+                ->first();
             if (!$view) {
                 $view = new View();
                 $view->post_id = $post->id;

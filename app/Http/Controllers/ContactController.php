@@ -7,11 +7,27 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Contact;
 use App\Models\ContactReply;
 use App\Http\Requests\ContactReplyRequest;
+use App\Http\Requests\ContactRequest;
 
 class ContactController extends Controller
 {
-    public function contract(Request $request)
-    {
+    public function contract(ContactRequest $request)
+    { 
+    $data    = $request->all();
+    $contact = Contact::create($data);
+
+    try {
+        Mail::send('emails.contact', $data, function ($message) {
+            $message->to('toby@cybridge.jp', 'Recipient Name')
+                    ->subject('Welcome to Our Website');
+            $message->from('toby@cybridge.jp', 'Example');
+        });
+    } catch (\Exception $e) {
+        \Log::error('Mail send error: '.$e->getMessage());
+        return response()->json(['message' => 'Error sending email'], 500);
+    }
+    
+    return response()->json(['message' => 'Mail sent successfully'], 200);
         try {
             $data    = $request->all();
             $contact = Contact::create($data);
